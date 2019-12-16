@@ -9,8 +9,8 @@ byte ip[] = { 192, 168, 0, 190 };                      // ip in lan (that's what
 byte gateway[] = { 192, 168, 0, 1 };                   // internet access via router
 byte subnet[] = { 255, 255, 255, 0 };                  //subnet mask
 EthernetServer server(80);                             //server port
-
-char header[150];
+int arrSize=300;
+char header[300];
 int bufferSize = 0;
 String level;
 
@@ -38,13 +38,12 @@ void loop() {
     while (client.connected()) {
       if (client.available()) {
         char c = client.read();
-        if (bufferSize < 150) header[bufferSize++] = c;
+        if (bufferSize < arrSize) header[bufferSize++] = c;
         
         //if HTTP request has ended
         if (c == '\n' && currentLineIsBlank) {
           Serial.println(header);
-          //example "user:password" base64 encoded string is "dXNlcjpwYXNzd29yZA=="
-          if (strstr(header, "base64encodedpassword") != NULL) {
+          if (strstr(header, "XXXXXX") != NULL) {
             client.println("HTTP/1.1 200 OK"); //send new page
             client.println("Content-Type: text/html");
             client.println("Connection: close");  // the connection will be closed after completion of the response
@@ -96,11 +95,14 @@ void loop() {
             //client.println("HTTP/1.1 401 Authorization Required");
             client.println("WWW-Authenticate: Basic realm=\"Secure\"");
             client.println("Content-Type: text/html");
+            client.println("Cache-Control: no-cache, no-store, must-revalidate");
+            client.println("Pragma: no-cache");
+            client.println("Expires: 0");
             client.println();
             client.println("<html>Text to send if user hits Cancel button</html>"); // really need this for the popup!
           }
           bufferSize = 0;
-          StrClear(header, 150);
+          StrClear(header, arrSize);
           break;
         }
         if (c == '\n') {
