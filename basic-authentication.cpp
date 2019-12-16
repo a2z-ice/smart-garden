@@ -9,8 +9,8 @@ byte ip[] = { 192, 168, 0, 190 };                      // ip in lan (that's what
 byte gateway[] = { 192, 168, 0, 1 };                   // internet access via router
 byte subnet[] = { 255, 255, 255, 0 };                  //subnet mask
 EthernetServer server(80);                             //server port
-int arrSize=300;
-char header[300];
+int arrSize=150;
+char header[150];
 int bufferSize = 0;
 String level;
 
@@ -43,7 +43,7 @@ void loop() {
         //if HTTP request has ended
         if (c == '\n' && currentLineIsBlank) {
           Serial.println(header);
-          if (strstr(header, "XXXXXX") != NULL) {
+          if (strstr(header, "cnVoaTowNTE=") != NULL) {
             client.println("HTTP/1.1 200 OK"); //send new page
             client.println("Content-Type: text/html");
             client.println("Connection: close");  // the connection will be closed after completion of the response
@@ -92,12 +92,11 @@ void loop() {
           } else {
             // wrong user/pass
             client.println("HTTP/1.1 401 Unauthorized");
-            //client.println("HTTP/1.1 401 Authorization Required");
             client.println("WWW-Authenticate: Basic realm=\"Secure\"");
             client.println("Content-Type: text/html");
-            client.println("Cache-Control: no-cache, no-store, must-revalidate");
-            client.println("Pragma: no-cache");
-            client.println("Expires: 0");
+//            client.println("Cache-Control: no-cache, no-store, must-revalidate");
+//            client.println("Pragma: no-cache");
+//            client.println("Expires: 0");
             client.println();
             client.println("<html>Text to send if user hits Cancel button</html>"); // really need this for the popup!
           }
