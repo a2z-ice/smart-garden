@@ -43,7 +43,7 @@ void loop() {
         //if HTTP request has ended
         if (c == '\n' && currentLineIsBlank) {
           Serial.println(header);
-          if (strstr(header, "cnVoaTowNTE=") != NULL) {
+          if (strstr(header, "xxxx") != NULL) {
             client.println("HTTP/1.1 200 OK"); //send new page
             client.println("Content-Type: text/html");
             client.println("Connection: close");  // the connection will be closed after completion of the response
