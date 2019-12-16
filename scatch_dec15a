@@ -50,10 +50,14 @@ void loop() {
           //Serial.print(c);
          }
 
+         String password = "XXXX";
+
          //if HTTP request has ended
          if (c == '\n') {          
            Serial.println(readString); //print to serial monitor for debuging
-     
+
+          if( readString.indexOf(password) > 0){
+            
            client.println("HTTP/1.1 200 OK"); //send new page
            client.println("Content-Type: text/html");
            client.println();    
@@ -70,8 +74,8 @@ void loop() {
            client.println("<br />");  
            client.println("<H2>Arduino with Ethernet Shield</H2>");
            client.println("<br />");  
-           client.println("<a href=\"/?button1on\"\">Pump On</a>");
-           client.println("<a href=\"/?button1off\"\">Pump Off</a><br />");  
+           client.println("<a href=\"/?button1on&" + password + "\"\">Pump On</a>");
+           client.println("<a href=\"/?button1off&" + password + "\"\">Pump Off</a><br />");  
            client.println("<br />");    
            client.println("<br />");
            
@@ -80,27 +84,30 @@ void loop() {
            client.println("<br />");
            client.println("</BODY>");
            client.println("</HTML>");
-           
-           //controls the Arduino if you press the buttons
-           if (readString.indexOf("?button1on") >0){
-               if(digitalRead(led) == LOW){
-                Serial.println("from low to high"); 
-                digitalWrite(led, HIGH);
-               }
-           }
-           if (readString.indexOf("?button1off") >0){
-               if(digitalRead(led) == HIGH){
-                Serial.println("from high to low"); 
-                digitalWrite(led, LOW); 
-               }
-           }
 
-           if(digitalRead(led) == HIGH){
-            client.println("ON"); 
-           } else  {
-            client.println("OFF"); 
-           }
            
+             //controls the Arduino if you press the buttons
+             if (readString.indexOf("?button1on") >0){
+                 if(digitalRead(led) == LOW){
+                  Serial.println("from low to high"); 
+                  digitalWrite(led, HIGH);
+                 }
+             }
+             if (readString.indexOf("?button1off") >0){
+                 if(digitalRead(led) == HIGH){
+                  Serial.println("from high to low"); 
+                  digitalWrite(led, LOW); 
+                 }
+             }
+  
+             if(digitalRead(led) == HIGH){
+              client.println("ON"); 
+             } else  {
+              client.println("OFF"); 
+             }
+           } else {
+            client.println("You are not authorized"); 
+           }
            delay(1);
            //stopping client
            client.stop();
