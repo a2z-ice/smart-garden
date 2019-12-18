@@ -1,6 +1,7 @@
 //reference
 //1 https://dzone.com/articles/playing-with-raspberry-pi-arduino-nodemcu-and-mqtt
 //2 https://stackoverflow.com/questions/44865473/rabbitmq-with-arduino-uno
+// api doc https://pubsubclient.knolleary.net/
 
 #include <SPI.h>
 #include <PubSubClient.h>
