@@ -46,7 +46,8 @@ void setup() {
 void loop() {
   if (!client.connected())
         reconnect();
-  String led4Status = LED_OFF;    
+  String led4Status = LED_OFF;
+  //This block is not needed but here it shows how to loop through certain interval    
   if (millis() - previousMillis > PUBLISH_DELAY){
     previousMillis = millis();
 
@@ -55,7 +56,7 @@ void loop() {
     } else {
       led4Status = LED_OFF;
     }
-    client.publish(LED_4_STATUS, (char*)led4Status.c_str());
+    //client.publish(LED_4_STATUS, (char*)led4Status.c_str());
   }
 
   client.loop();
@@ -75,6 +76,7 @@ void reconnect() {
       Serial.print("Connection failed, state: ");
       Serial.print(client.state());
       Serial.println(", retrying in 5 seconds");
+      digitalWrite(led, LOW); 
       delay(5000); // Wait 5 seconds before retrying
     }
   }
@@ -106,5 +108,7 @@ void callback(char* topic, byte* payload, unsigned int length)
         digitalWrite(led, LOW);  
       }
   }
+  //Instantely let the client know about the status
+  client.publish(LED_4_STATUS, message);
   }
 }
