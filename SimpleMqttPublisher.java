@@ -12,7 +12,7 @@ public class SimpleMqttPublisher {
 	public static MqttAsyncClient myClient;
 
 	private static MqttConnectOptions conOpts = new MqttConnectOptions();
-	private static String topicName = "test-topic";
+	private static String topicName = "led_4_cmd";
 	private static final String host = "localhost";
 	private static final int port = 1883;
 	private static final String brokerUrl = "tcp://" + host + ":" + port;
@@ -30,11 +30,16 @@ public class SimpleMqttPublisher {
 		String clientId = "desktop-java";
 		MqttClient client = new MqttClient(brokerUrl, clientId);
 		client.connect(conOpts);
-		
-		for(int i = 0; i < 1000; i ++) {
-			publish(client, topicName, 1, ("message " + i).getBytes());
-//			System.out.println("message::" + i);
-			Thread.sleep(2000);
+		String message = "off";
+		for(int i = 1; i < 1000; i ++) {
+			if(i%2==0) {
+				message = "ON";
+			} else {
+				message = "OFF";
+			}
+			System.out.println("message::" + message + " topic:" + topicName);
+			publish(client, topicName, 1, (message).getBytes());
+			Thread.sleep(8000);
 		}
 	    client.disconnect();
 		
