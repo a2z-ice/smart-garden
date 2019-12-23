@@ -12,10 +12,16 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 public class MqttSubscribeSample implements MqttCallback {
 
     public static void main(String[] args) {
-        String topic = "test-topic";
+    	String clientId = "JavaAsyncSample-";
+    	
+    	if(args.length > 0) {
+    		clientId += args[0];
+    		System.out.println("client id:" + clientId);
+    	}
+    	
+        String topic = "led_4_status";
         int qos = 2;
         String broker = "tcp://localhost:1883";
-        String clientId = "JavaAsyncSample";
         MemoryPersistence persistence = new MemoryPersistence();
 
         try {
