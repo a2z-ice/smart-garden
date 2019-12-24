@@ -1,9 +1,0 @@
-server:
-  port: 9090
-  
-zuul:
-  routes:
-    service:
-      path: /**
-      sensitiveHeaders: referer,sec-fetch-mode,sec-fetch-site,cf-visitor,cf-ray,x-forwarded-for,accept-encoding,user-agent,x-forwarded-proto,accept
-      url: http://192.168.0.190
