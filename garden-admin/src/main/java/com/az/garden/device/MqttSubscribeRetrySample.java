@@ -9,6 +9,7 @@ import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,17 +42,14 @@ public class MqttSubscribeRetrySample implements MqttCallbackExtended {
 	private SimpMessageSendingOperations messagingTemplate;
 
 	public MqttSubscribeRetrySample() throws MqttException {
-		String broker = "tcp://" + brokerHost + ":" + brokerMqttPort;
-		sampleClient = new MqttAsyncClient(broker, clientId, persistence);
-		MqttConnectOptions connOpts = new MqttConnectOptions();
-		connOpts.setUserName("guest");
-		connOpts.setPassword("guest".toCharArray());
-		connOpts.setCleanSession(true);
-		connOpts.setAutomaticReconnect(true);
-		connOpts.setMaxReconnectDelay(5000);
-		sampleClient.setCallback(this);
-		this.sampleClient.connect(connOpts);
-	}
+		/*
+		 * String broker = "tcp://" + brokerHost + ":" + brokerMqttPort; sampleClient =
+		 * new MqttAsyncClient(broker, clientId, persistence); MqttConnectOptions
+		 * connOpts = new MqttConnectOptions(); connOpts.setUserName("guest");
+		 * connOpts.setPassword("guest".toCharArray()); connOpts.setCleanSession(true);
+		 * connOpts.setAutomaticReconnect(true); connOpts.setMaxReconnectDelay(5000);
+		 * sampleClient.setCallback(this); this.sampleClient.connect(connOpts);
+		 */}
 
 	public void connectionLost(Throwable arg0) {
 		System.err.println("connection lost");
@@ -83,6 +81,10 @@ public class MqttSubscribeRetrySample implements MqttCallbackExtended {
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}		
+	}
+	
+	public void publish(String command) throws MqttPersistenceException, MqttException {
+		this.sampleClient.publish(this.topic, command.getBytes(), 0, false);
 	}
 	
 	@PostConstruct

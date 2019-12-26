@@ -7,9 +7,15 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 
 import com.az.garden.domain.Device;
+import com.az.garden.service.DeviceCommandService;
 
 @Controller
 public class GardenController {
+	
+	private DeviceCommandService deviceCommandService;
+	public GardenController(DeviceCommandService deviceCommandService) {
+		this.deviceCommandService = deviceCommandService;
+	}
 
 	@MessageMapping("/admin.newUser")
 	@SendTo("/topic/status")
@@ -21,7 +27,7 @@ public class GardenController {
 	@MessageMapping("/device.instruction")
 	public Device switchOn(@Payload Device device) {
 		System.out.println("calling device instruction..");
-		
+		deviceCommandService.sendCommandToDevice(device);
 		return device;
 	}
 	

@@ -46,7 +46,7 @@ function connectionSuccess() {
 }
 
 function switchOn(event) {
-
+	btnOn.classList.add('disabled'); 
 	if (stompClient) {
 		var device = {
 			name : 'on',
@@ -60,7 +60,7 @@ function switchOn(event) {
 }
 
 function switchOff(event) {
-
+	btnOff.classList.add('disabled'); 
 	if (stompClient) {
 		var device = {
 			name : 'off',
@@ -76,17 +76,19 @@ function switchOff(event) {
 var value = 0;
 function onMessageReceived(payload) {
 	var message = JSON.parse(payload.body);
-	
-	var display = message.command;
-	
-	if(value % 2 == 0){
+	var command = message.command;
+	command = command.toUpperCase()
+	if('ON' === command){
 		btnOn.classList.add('disabled'); // Disables visually
-		display += ' disabled';
+		btnOff.classList.remove('disabled'); 
+	} else if ('OFF' === command){
+		btnOff.classList.add('disabled'); 
+		btnOn.classList.remove('disabled'); 
 	} else {
-		btnOn.classList.remove('disabled'); // Disables visually
-		display += ' enabled';
+		btnOn.classList.remove('disabled');
+		btnOff.classList.remove('disabled');
 	}
-	value++;
-	document.querySelector('#deviceStatus').innerHTML = display;
+	
+	document.querySelector('#deviceStatus').innerHTML = ">>" + command + "<<";
 	console.log(message);
 }
