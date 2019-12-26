@@ -1,13 +1,15 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
+#include <avr/wdt.h>
 
 #define ARDUINO_CLIENT_ID "arduino_1"  
 #define LED_4_STATUS "led_4_status"   //Topic
 #define SUBJECT_LED_4_CMD "led_4_cmd" //Topic
 #define LED_ON "ON"
 #define LED_OFF "OFF"
-#define PUBLISH_DELAY 3000 
+#define RESET "RESET"
+#define PUBLISH_DELAY 5000 
 
 int led = 4;
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };   //physical mac address
@@ -56,7 +58,8 @@ void loop() {
     } else {
       led4Status = LED_OFF;
     }
-    //client.publish(LED_4_STATUS, (char*)led4Status.c_str());
+    Serial.println("going to publish status: " + led4Status);
+    client.publish(LED_4_STATUS, (char*)led4Status.c_str());
   }
 
   client.loop();
@@ -107,8 +110,24 @@ void callback(char* topic, byte* payload, unsigned int length)
       if (digitalRead(led) == HIGH) {
         digitalWrite(led, LOW);  
       }
-  }
+    }
+
+    if(strcmp(message, RESET) == 0){
+      String resetting = "resetting..";
+      char charBuf[resetting.length() + 1];
+      resetting.toCharArray(charBuf, resetting.length() + 1); 
+      Serial.println("resetting...");
+      client.publish(LED_4_STATUS, charBuf);
+      delay(2000);
+      reboot();
+    }
   //Instantely let the client know about the status
   client.publish(LED_4_STATUS, message);
   }
+}
+
+void reboot() {
+  wdt_disable();
+  wdt_enable(WDTO_15MS);
+  while (1) {}
 }

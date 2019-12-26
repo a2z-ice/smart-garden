@@ -19,13 +19,15 @@ public class DeviceCommander implements DeviceCommandService {
 	public void sendCommandToDevice(Device device) {
 		if("on".equalsIgnoreCase(device.getCommand())) {
 			switchOn();
+		} else if ("reset".equalsIgnoreCase(device.getCommand())) {
+			switchReset();
 		} else {
 			switchOff();
 		}
 	}
 	private void switchOn() {
 			try {
-				mqttClient.publish("on");
+				mqttClient.publish("ON");
 			} catch (MqttException e) {
 				e.printStackTrace();
 			}
@@ -33,7 +35,15 @@ public class DeviceCommander implements DeviceCommandService {
 	
 	private void switchOff() {
 		try {
-			mqttClient.publish("off");
+			mqttClient.publish("OFF");
+		} catch (MqttException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void switchReset() {
+		try {
+			mqttClient.publish("RESET");
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

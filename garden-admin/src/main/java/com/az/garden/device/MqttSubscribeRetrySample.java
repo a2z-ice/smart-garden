@@ -24,7 +24,8 @@ import com.az.garden.domain.Device;
 public class MqttSubscribeRetrySample implements MqttCallbackExtended {
 
 
-	String topic = "led_4_cmd";
+	String commandTopic = "led_4_cmd";
+	String statusTopic = "led_4_status";
 	private MqttAsyncClient sampleClient;
 	String clientId = "JavaAsyncSample-";
 	int qos = 2;
@@ -77,14 +78,16 @@ public class MqttSubscribeRetrySample implements MqttCallbackExtended {
 		try {
 			//Very important to resubcribe to the topic after the connection was (re-)estabslished. 
 			//Otherwise you are reconnected but you don't get any message
-			this.sampleClient.subscribe(this.topic, qos);
+			String[] topics = {this.commandTopic,this.statusTopic};
+			int [] qosCollection = {qos,qos};
+			this.sampleClient.subscribe(topics, qosCollection);
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}		
 	}
 	
 	public void publish(String command) throws MqttPersistenceException, MqttException {
-		this.sampleClient.publish(this.topic, command.getBytes(), 0, false);
+		this.sampleClient.publish(this.commandTopic, command.getBytes(), 0, false);
 	}
 	
 	@PostConstruct
