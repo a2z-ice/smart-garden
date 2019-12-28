@@ -78,8 +78,10 @@ public class MqttSubscribeRetrySample implements MqttCallbackExtended {
 		try {
 			//Very important to resubcribe to the topic after the connection was (re-)estabslished. 
 			//Otherwise you are reconnected but you don't get any message
-			String[] topics = {this.commandTopic,this.statusTopic};
-			int [] qosCollection = {qos,qos};
+//			String[] topics = {this.commandTopic,this.statusTopic};
+//			int [] qosCollection = {qos,qos};
+			String[] topics = {this.statusTopic};
+			int [] qosCollection = {qos};
 			this.sampleClient.subscribe(topics, qosCollection);
 		} catch (MqttException e) {
 			e.printStackTrace();
