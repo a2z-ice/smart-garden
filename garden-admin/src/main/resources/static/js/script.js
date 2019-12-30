@@ -5,13 +5,11 @@ var dialogueForm = document.querySelector('#dialogueForm');
 
 var btnOn = document.querySelector('#btnOn');
 var btnOff = document.querySelector('#btnOff');
-var btnReset = document.querySelector('#btnReset');
 
 welcomeForm.addEventListener('submit', connect, true);
 
-btnOn.addEventListener('click', switchOn, true)
-btnOff.addEventListener('click', switchOff, true)
-btnReset.addEventListener('click', reset, true)
+btnOn.addEventListener('click', switchOn, true);
+btnOff.addEventListener('click', switchOff, true);
 
 var stompClient = null;
 var name = null;
@@ -75,22 +73,6 @@ function switchOff(event) {
 	event.preventDefault();
 }
 
-function reset(event) {
-	btnReset.classList.add('disabled'); 
-	btnOn.classList.add('disabled');
-	btnOff.classList.add('disabled');
-	if (stompClient) {
-		var device = {
-			name : 'reset',
-			command : 'reset'
-		};
-
-		stompClient.send("/app/device.instruction", {}, JSON
-				.stringify(device));
-	}
-	event.preventDefault();
-}
-
 function onMessageReceived(payload) {
 	var message = JSON.parse(payload.body);
 	var command = message.command;
@@ -99,14 +81,12 @@ function onMessageReceived(payload) {
 	if('ON' === command){
 		btnOn.classList.add('disabled'); // Disables visually
 		btnOff.classList.remove('disabled'); 
-		btnReset.classList.remove('disabled');
 	} else if ('OFF' === command){
 		btnOff.classList.add('disabled'); 
 		btnOn.classList.remove('disabled'); 
-		btnReset.classList.remove('disabled');
-	} else if ('resetting..' !== message.command){
-		btnOn.classList.remove('disabled');
-		btnOff.classList.remove('disabled');
+	} else {
+		btnOn.classList.add('disabled');
+		btnOff.classList.add('disabled');
 	}
 	
 	document.querySelector('#deviceStatus').innerHTML = ">>" + command + "<<";

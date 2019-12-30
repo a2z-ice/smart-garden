@@ -1,15 +1,20 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-#include <avr/wdt.h>
 
 #define ARDUINO_CLIENT_ID "arduino_1"  
 #define LED_4_STATUS "led_4_status"   //Topic
 #define SUBJECT_LED_4_CMD "led_4_cmd" //Topic
+
 #define LED_ON "ON"
 #define LED_OFF "OFF"
 #define RESET "RESET"
-#define PUBLISH_DELAY 5000 
+#define PUBLISH_DELAY 5000
+#define MESSAGE_RECEIVED_DELAY 20000 
+
+#define MQTT_PORT 1883
+#define MQTT_BROKER_USER "guest"
+#define MQTT_BROKER_PASSWORD "guest"
 
 int led = 4;
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };   //physical mac address
@@ -30,7 +35,7 @@ void setup() {
     ; // wait for serial port to connect. Needed for Leonardo only
   } 
      // MTTQ parameters
-  client.setServer(mqttServer, 1883);
+  client.setServer(mqttServer, MQTT_PORT);
   client.setCallback(callback);
 
   pinMode(led, OUTPUT);
@@ -46,20 +51,15 @@ void setup() {
 }
 
 void loop() {
+  
   if (!client.connected())
         reconnect();
+
   String led4Status = LED_OFF;
   //This block is not needed but here it shows how to loop through certain interval    
-  if (millis() - previousMillis > PUBLISH_DELAY){
+  if (millis() - previousMillis > PUBLISH_DELAY) {
     previousMillis = millis();
-
-    if (digitalRead(led) == HIGH) {
-      led4Status = LED_ON;
-    } else {
-      led4Status = LED_OFF;
-    }
-    Serial.println("going to publish status: " + led4Status);
-    client.publish(LED_4_STATUS, (char*)led4Status.c_str());
+    publishStatus();
   }
 
   client.loop();
@@ -71,7 +71,7 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection ... ");
     // Attempt to connect first guest is user and second is pass
-    if (client.connect(ARDUINO_CLIENT_ID, "guest","guest")) {
+    if (client.connect(ARDUINO_CLIENT_ID, MQTT_BROKER_USER,MQTT_BROKER_PASSWORD)) {
       Serial.println("connected");
       // (re)subscribe
       client.subscribe(SUBJECT_LED_4_CMD);
@@ -111,23 +111,20 @@ void callback(char* topic, byte* payload, unsigned int length)
         digitalWrite(led, LOW);  
       }
     }
-
-    if(strcmp(message, RESET) == 0){
-      String resetting = "resetting..";
-      char charBuf[resetting.length() + 1];
-      resetting.toCharArray(charBuf, resetting.length() + 1); 
-      Serial.println("resetting...");
-      client.publish(LED_4_STATUS, charBuf);
-      delay(2000);
-      reboot();
-    }
-  //Instantely let the client know about the status
-  client.publish(LED_4_STATUS, message);
+ 
+  publishStatus();
   }
 }
 
-void reboot() {
-  wdt_disable();
-  wdt_enable(WDTO_15MS);
-  while (1) {}
+void publishStatus(){
+  String led4Status = LED_OFF;
+  
+  if (digitalRead(led) == HIGH) {
+      led4Status = LED_ON;
+    } else {
+      led4Status = LED_OFF;
+    }
+  Serial.println("going to publish status: " + led4Status);  
+  client.publish(LED_4_STATUS, (char*)led4Status.c_str());
 }
+
