@@ -12,7 +12,8 @@ public class SimpleManagedMqttPublisher {
 	public static MqttAsyncClient myClient;
 
 	private static MqttConnectOptions conOpts = new MqttConnectOptions();
-	private static String topicName = "led_4_cmd";
+	private static String topicCmd = "led_4_cmd";
+	private static String topicStatus = "led_4_status";
 	private static final String host = "localhost";
 	private static final int port = 1883;
 	private static final String brokerUrl = "tcp://" + host + ":" + port;
@@ -36,8 +37,9 @@ public class SimpleManagedMqttPublisher {
 			} else {
 				message = "OFF";
 			}
-			System.out.println("message::" + message + " topic:" + topicName);
-			client.publish(topicName, 1, (message).getBytes());
+			System.out.println("message::" + message + " topic:" + topicCmd);
+			client.publish(topicCmd, 1, (message).getBytes());
+			client.publish(topicStatus, 1, (message).getBytes());
 			Thread.sleep(8000);
 			} 
 		System.out.println("Finished operation...");
