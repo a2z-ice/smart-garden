@@ -22,10 +22,13 @@ FROM rabbitmq:management-alpine
 USER root
 
 RUN rabbitmq-plugins enable --offline rabbitmq_mqtt rabbitmq_web_mqtt_examples rabbitmq_stomp
-CMD [ "echo","done" ]
+
+CMD ["rabbitmq-server"]
+
+EXPOSE 15672 1883 61613 15670 5671
 
 </code></pre>
 
-docker build -t smart-garden-rabbitmq -f Dockerfile .
+docker build -t smart-g-amqp -f Dockerfile .
 
-docker run -d -p 15672:15672 -p 5672:5672 -p 5671:5671 -p 15670:15670 -p 61613:61613 -p 1883:1883 --name rabbitmq rabbitmq:management-alpine
+docker run -d -p 15672:15672 -p 5672:5672 -p 5671:5671 -p 15670:15670 -p 61613:61613 -p 1883:1883 --name rabbitmq smart-g-amqp
