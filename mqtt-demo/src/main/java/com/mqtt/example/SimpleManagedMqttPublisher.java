@@ -14,7 +14,7 @@ public class SimpleManagedMqttPublisher {
 	private static MqttConnectOptions conOpts = new MqttConnectOptions();
 	private static String topicCmd = "led_4_cmd";
 	private static String topicStatus = "led_4_status";
-	private static final String host = "localhost";
+	private static final String host = "192.168.0.101";
 	private static final int port = 1883;
 	private static final String brokerUrl = "tcp://" + host + ":" + port;
 	private static final byte[] payload = "this payload was published on MQTT and read using AMQP".getBytes();
