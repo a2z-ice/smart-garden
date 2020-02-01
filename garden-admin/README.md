@@ -32,3 +32,6 @@ EXPOSE 15672 1883 61613 15670 5671
 docker build -t smart-g-amqp -f Dockerfile .
 
 docker run -d -p 15672:15672 -p 5672:5672 -p 5671:5671 -p 15670:15670 -p 61613:61613 -p 1883:1883 --name rabbitmq smart-g-amqp
+
+#Run docker with name
+docker run -v /var/run/docker.sock:/var/run/docker.sock --name jenkins-docker -p 8080:8080 jenkins-docker
