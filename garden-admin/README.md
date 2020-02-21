@@ -1,3 +1,12 @@
+# Docker log rotating:my-app:
+<pre><code>
+image: my-app:latest
+    logging:
+        driver: "json-file"
+        options:
+            max-file: 5
+            max-size: 10m
+</pre></code>            
 # Docker for rabbitmq
 
 docker run -d --name rabbit_stomp rabbitmq:management-alpine
